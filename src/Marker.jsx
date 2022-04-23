@@ -14,13 +14,33 @@
  * limitations under the License.
  */
 
-import * as React from "react";
-import * as ReactDom from "react-dom/client";
+import React from "react";
 
-import App from "./App";
+const google = window.google;
+// [START maps_react_map_marker_component]
+const Marker = (options) => {
+  const [marker, setMarker] = React.useState();
 
-window.addEventListener("DOMContentLoaded", () => {
-  ReactDom.createRoot(document.getElementById("root")).render(<App />);
-});
+  React.useEffect(() => {
+    if (!marker) {
+      setMarker(new google.maps.Marker());
+    }
 
-export {};
+    // remove marker from map on unmount
+    return () => {
+      if (marker) {
+        marker.setMap(null);
+      }
+    };
+  }, [marker]);
+
+  React.useEffect(() => {
+    if (marker) {
+      marker.setOptions(options);
+    }
+  }, [marker, options]);
+
+  return null;
+};
+
+export default Marker;
