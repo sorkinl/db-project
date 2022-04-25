@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/googlemaps": "^3.43.3",
     "@types/markerclustererplus": "^2.1.33",
+    "axios": "^0.26.1",
     "fast-equals": "^3.0.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -40,5 +41,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://localhost:8080"
 }

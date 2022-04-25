@@ -2,6 +2,7 @@ import * as React from "react";
 import { Wrapper } from "@googlemaps/react-wrapper";
 import Map from "./Map";
 import Marker from "./Marker";
+import axios from "axios";
 const render = (status) => {
   return <h1>{status}</h1>;
 };
@@ -17,8 +18,35 @@ const App = () => {
 
   const onClick = (e) => {
     // avoid directly mutating state
-    if (e.latLng) {
+    if (e.latLng && clicks.length < 2) {
       setClicks([...clicks, e.latLng]);
+    }
+  };
+
+  const addTrip = () => {
+    console.log("here1", clicks.length);
+    let headers = {
+      "Access-Control-Allow-Origin": "*",
+    };
+    if (clicks.length == 2) {
+      console.log("here");
+      axios
+        .post(
+          "/api/addTrip",
+          {
+            name: "Trip1",
+            origin: clicks[0],
+            destination: clicks[1],
+            uid: 1,
+          },
+          headers
+        )
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
   };
 
@@ -77,6 +105,7 @@ const App = () => {
         <pre key={i}>{JSON.stringify(latLng.toJSON(), null, 2)}</pre>
       ))}
       <button onClick={() => setClicks([])}>Clear</button>
+      <button onClick={() => addTrip()}>Add Trip</button>
     </div>
   );
 
