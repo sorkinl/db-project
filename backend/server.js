@@ -46,6 +46,57 @@ app.post("/api/addTrip", jsonParser, (req, res) => {
   );
 });
 
+app.get("/api/getAllTrips", jsonParser, (req, res) => {
+  connection.query(`Select * from trips `, (err, results, fields) => {
+    if (err) {
+      console.log(results);
+      res.json({ message: "Error" });
+      throw err;
+    } else {
+      res.json({ message: "Success", results });
+    }
+
+    console.log("Success");
+  });
+});
+app.post("/api/updateTrip", jsonParser, (req, res) => {
+  let body = req.body;
+  let query = "UPDATE trips SET ? WHERE ?";
+  let escapeObj = {};
+  if (body.name) {
+    escapeObj.name = body.name;
+  }
+  if (body.origin) {
+    escapeObj.origin = {
+      toSqlString: () => {
+        return `POINT(${body.origin.lat}, ${body.origin.lng})`;
+      },
+    };
+  }
+  if (body.destination) {
+    escapeObj.destination = {
+      toSqlString: () => {
+        return `POINT(${body.destination.lat},${body.destination.lng})`;
+      },
+    };
+  }
+  console.log(body);
+  connection.query(
+    query,
+    [escapeObj, { trip_id: body.tripId }],
+    (err, results, fields) => {
+      if (err) {
+        console.log(results);
+        res.json({ message: "Error" });
+        throw err;
+      } else {
+        console.log("Success");
+        res.json({ message: "Success" });
+      }
+    }
+  );
+});
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

@@ -15,6 +15,19 @@ const App = () => {
     lat: 0,
     lng: 0,
   });
+  const [tripList, setTripList] = React.useState([]);
+
+  const loadTrips = () => {
+    axios
+      .get("/api/getAllTrips")
+      .then((res) => {
+        setTripList(res.data.results);
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   const onClick = (e) => {
     // avoid directly mutating state
@@ -25,22 +38,16 @@ const App = () => {
 
   const addTrip = () => {
     console.log("here1", clicks.length);
-    let headers = {
-      "Access-Control-Allow-Origin": "*",
-    };
+
     if (clicks.length == 2) {
       console.log("here");
       axios
-        .post(
-          "/api/addTrip",
-          {
-            name: "Trip1",
-            origin: clicks[0],
-            destination: clicks[1],
-            uid: 1,
-          },
-          headers
-        )
+        .post("/api/addTrip", {
+          name: "Trip1",
+          origin: clicks[0],
+          destination: clicks[1],
+          uid: 1,
+        })
         .then(function (response) {
           console.log(response);
         })
@@ -106,6 +113,12 @@ const App = () => {
       ))}
       <button onClick={() => setClicks([])}>Clear</button>
       <button onClick={() => addTrip()}>Add Trip</button>
+      <button onClick={() => loadTrips()}>Load trips</button>
+      <div>
+        {tripList.map((trip) => (
+          <h1>{trip.name}</h1>
+        ))}
+      </div>
     </div>
   );
 
