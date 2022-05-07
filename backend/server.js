@@ -4,6 +4,7 @@ const app = express();
 var bodyParser = require("body-parser");
 const connection = require("./config/db.config");
 var jsonParser = bodyParser.json();
+const bcrypt = require("bcrypt");
 connection.connect();
 
 connection.query("SELECT 1 + 1 AS solution", (err, rows, fields) => {
@@ -95,6 +96,27 @@ app.post("/api/updateTrip", jsonParser, (req, res) => {
       }
     }
   );
+});
+
+app.post("/api/signup", jsonParser, (req, res) => {
+  let body = req.body;
+  let query = "INSERT INTO users SET ?";
+  console.log(body.pw);
+  bcrypt.hash(body.pw, 10, function (err, hash) {
+    connection.query(
+      query,
+      { username: body.username, pw_hash: hash },
+      (err, results, fields) => {
+        if (err) throw err;
+        console.log(results);
+        res.send({
+          message: "Success",
+          uid: results.insertId,
+          username: body.username,
+        });
+      }
+    );
+  });
 });
 
 // set port, listen for requests
