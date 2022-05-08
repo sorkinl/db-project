@@ -9,17 +9,22 @@ import SignIn from "./SignIn";
 const render = (status) => {
   return <h1>{status}</h1>;
 };
-
+/**
+ *
+ * booking
+ * filters
+ */
 const App = () => {
   // [START maps_react_map_component_app_state]
   const [clicks, setClicks] = React.useState([]);
-  const [zoom, setZoom] = React.useState(3); // initial zoom
+  const [zoom, setZoom] = React.useState(11); // initial zoom
   const [center, setCenter] = React.useState({
-    lat: 0,
-    lng: 0,
+    lat: 40.22400816825143,
+    lng: -77.06010466183004,
   });
   const [tripList, setTripList] = React.useState([]);
   const [modal, setModal] = React.useState(false);
+  const [tripId, setTripId] = React.useState(null);
   /**
    * 1 - tripform
    * 2 - password form
@@ -27,8 +32,8 @@ const App = () => {
    */
   const [modalForm, setModalForm] = React.useState(0);
   const [user, setUser] = React.useState({
-    uid: null,
-    username: "",
+    uid: 14,
+    username: "sorkinl1",
   });
   const [inputValues, setInputValues] = React.useState({
     username: "",
@@ -61,6 +66,31 @@ const App = () => {
       });
   };
 
+  const loadMyTrips = () => {
+    axios
+      .get(`/api/getUserTrips/${user.uid}`)
+      .then((res) => {
+        setTripList(res.data.results);
+        console.log(res);
+        console.log(tripList);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const loadBookedTrips = () => {
+    axios
+      .get(`/api/getBookedTrips/${user.uid}`)
+      .then((res) => {
+        setTripList(res.data.results);
+        console.log(res);
+        console.log(tripList);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
   const deleteTrip = () => {
     axios
       .delete("/api/delete", { data: { tripId: tripList[0].tripId } })
@@ -75,6 +105,7 @@ const App = () => {
   const onClick = (e) => {
     // avoid directly mutating state
     if (e.latLng && clicks.length < 2) {
+      console.log(e.latLng);
       setClicks([...clicks, e.latLng]);
     }
   };
@@ -111,11 +142,29 @@ const App = () => {
     }
   };
 
-  const signInModal = () => {
-    setModal(true);
-  };
   // [END maps_react_map_component_app_state]
+  const updateTrip = () => {
+    if (clicks.length == 2 && user.uid && inputValues.tripName.length != 0) {
+      console.log("here");
+      axios
+        .post("/api/updateTrip", {
+          tripId: tripId,
+          name: inputValues.tripName,
+          origin: clicks[0],
+          destination: clicks[1],
+          uid: user.uid,
+        })
 
+        .then(function (response) {
+          console.log(response);
+          setInputValues({});
+          setClicks([]);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+  };
   const handleOnChange = (event) => {
     const { name, value } = event.target;
     setInputValues({ ...inputValues, [name]: value });
@@ -147,6 +196,7 @@ const App = () => {
     </div>
   );
 
+  console.log(clicks);
   // [START maps_react_map_component_app_return]
   return (
     <div style={{ display: "flex", height: "100%" }}>
@@ -206,10 +256,12 @@ const App = () => {
           }
         />
         <h3>Current user: {user.uid ? user.username : "None"}</h3>
+        {tripId && <h3>Trip id: {tripId}</h3>}
         <input
           placeholder="Trip name"
           onChange={handleOnChange}
           name="tripName"
+          value={inputValues.tripName}
         ></input>
         <h3>
           {clicks.length === 0 ? "Click on map to add markers" : "Clicks"}
@@ -218,8 +270,15 @@ const App = () => {
           <pre key={i}>{JSON.stringify(latLng.toJSON(), null, 2)}</pre>
         ))}
 
-        <button onClick={() => setClicks([])}>Clear</button>
+        <button
+          onClick={() => {
+            setClicks([]);
+          }}
+        >
+          Clear
+        </button>
         <button onClick={() => addTrip()}>Add Trip</button>
+        {tripId && <button onClick={() => updateTrip()}>Update trip</button>}
         <button
           onClick={() => {
             setModal(true);
@@ -239,7 +298,17 @@ const App = () => {
 
         <ReactModal isOpen={modal} contentLabel="Minimal Modal Example">
           {modalForm == 1 && (
-            <TripForm tripList={tripList} loadTrips={loadTrips} />
+            <TripForm
+              tripList={tripList}
+              loadTrips={loadTrips}
+              setModal={setModal}
+              setTripId={setTripId}
+              setInputValues={setInputValues}
+              setClicks={setClicks}
+              loadMyTrips={loadMyTrips}
+              user={user}
+              loadBookedTrips={loadBookedTrips}
+            />
           )}
           {modalForm == 2 && (
             <SignIn
