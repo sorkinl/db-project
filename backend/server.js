@@ -60,6 +60,23 @@ app.get("/api/getAllTrips", jsonParser, (req, res) => {
     console.log("Success");
   });
 });
+
+app.get(`/api/getUserTrips/:uid`, jsonParser, (req, res) => {
+  connection.query(
+    `Select * from trips WHERE uid = ${req.params.uid}`,
+    (err, results, fields) => {
+      if (err) {
+        console.log(results);
+        res.json({ message: "Error" });
+        throw err;
+      } else {
+        res.json({ message: "Success", results });
+      }
+
+      console.log("Success");
+    }
+  );
+});
 app.post("/api/updateTrip", jsonParser, (req, res) => {
   let body = req.body;
   let query = "UPDATE trips SET ? WHERE ?";
