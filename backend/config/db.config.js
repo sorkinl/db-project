@@ -1,7 +1,7 @@
 const mysql = require("mysql");
 const config = {
   host: process.env.HOST,
-  user: process.env.USER,
+  user: "root",
   password: "",
   database: process.env.DB,
 };

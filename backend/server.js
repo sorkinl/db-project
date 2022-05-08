@@ -97,6 +97,22 @@ app.post("/api/updateTrip", jsonParser, (req, res) => {
   );
 });
 
+app.delete("/api/deleteTrip", jsonParser, (req, res) => {
+  let body = req.body;
+
+  connection.query(`DELETE from trips WHERE trip_id = (${body.trip_id}) `, (err, results, fields) => {
+    if (err) {
+      console.log(err);
+      res.json({ message: "Error" });
+      throw err;
+    } else {
+      res.json({ message: "Success", results });
+    }
+
+    console.log("Success");
+  });
+})
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
