@@ -77,6 +77,23 @@ app.get(`/api/getUserTrips/:uid`, jsonParser, (req, res) => {
     }
   );
 });
+
+app.get(`/api/getBookedTrips/:uid`, jsonParser, (req, res) => {
+  connection.query(
+    `Select * from user_trips ut JOIN trips t ON t.trip_id = ut.trip_id WHERE ut.uid = ${req.params.uid}`,
+    (err, results, fields) => {
+      if (err) {
+        console.log(results);
+        res.json({ message: "Error" });
+        throw err;
+      } else {
+        res.json({ message: "Success", results });
+      }
+
+      console.log("Success");
+    }
+  );
+});
 app.post("/api/updateTrip", jsonParser, (req, res) => {
   let body = req.body;
   let query = "UPDATE trips SET ? WHERE ?";
@@ -133,6 +150,52 @@ app.post("/api/signup", jsonParser, (req, res) => {
         });
       }
     );
+  });
+});
+
+app.post("/api/bookTrip", jsonParser, (req, res) => {
+  let body = req.body;
+  let bookTrip = "INSERT INTO user_trips SET trip_id = ?, uid = ?";
+  let decreaseCapacity =
+    "UPDATE trips SET capacity = capacity - 1 WHERE trip_id = ?";
+  console.log(body);
+  connection.beginTransaction((err) => {
+    if (err) {
+      console.error(err);
+      throw err;
+    }
+
+    connection.query(
+      bookTrip,
+      [body.tripId, body.uid],
+      function (error, results, fields) {
+        if (error) {
+          return connection.rollback(function () {
+            throw error;
+          });
+        }
+      }
+    );
+
+    connection.query(
+      decreaseCapacity,
+      body.tripId,
+      function (error, results, fields) {
+        if (error) {
+          return connection.rollback(function () {
+            throw error;
+          });
+        }
+      }
+    );
+    connection.commit(function (err) {
+      if (err) {
+        return connection.rollback(function () {
+          throw err;
+        });
+      }
+      res.send({ message: "Success" });
+    });
   });
 });
 

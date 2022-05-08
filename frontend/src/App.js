@@ -9,7 +9,11 @@ import SignIn from "./SignIn";
 const render = (status) => {
   return <h1>{status}</h1>;
 };
-
+/**
+ *
+ * booking
+ * filters
+ */
 const App = () => {
   // [START maps_react_map_component_app_state]
   const [clicks, setClicks] = React.useState([]);
@@ -75,6 +79,18 @@ const App = () => {
       });
   };
 
+  const loadBookedTrips = () => {
+    axios
+      .get(`/api/getBookedTrips/${user.uid}`)
+      .then((res) => {
+        setTripList(res.data.results);
+        console.log(res);
+        console.log(tripList);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
   const deleteTrip = () => {
     axios
       .delete("/api/delete", { data: { tripId: tripList[0].tripId } })
@@ -290,6 +306,8 @@ const App = () => {
               setInputValues={setInputValues}
               setClicks={setClicks}
               loadMyTrips={loadMyTrips}
+              user={user}
+              loadBookedTrips={loadBookedTrips}
             />
           )}
           {modalForm == 2 && (

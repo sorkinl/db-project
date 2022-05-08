@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 const TripForm = ({
   tripList,
@@ -8,6 +9,8 @@ const TripForm = ({
   setInputValues,
   setClicks,
   loadMyTrips,
+  user,
+  loadBookedTrips,
 }) => {
   console.log(tripList);
 
@@ -22,12 +25,26 @@ const TripForm = ({
     setInputValues({ tripName: trip.name });
     setClicks([marker1, marker2]);
   };
+
+  const bookTrip = (trip) => {
+    axios
+      .post("/api/bookTrip", {
+        tripId: trip.trip_id,
+        uid: user.uid,
+      })
+      .then(() => {
+        setModal(false);
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div>
       <button onClick={() => loadTrips()}>Load Trips</button>
       <button onClick={() => loadMyTrips()}>Load My Trips</button>
+      <button onClick={() => loadBookedTrips()}>Load booked Trips</button>
       {tripList.map((trip) => (
-        <div>
+        <div key={trip.trip_id}>
           <h3
             onClick={() => {
               sendTripData(trip);
@@ -42,6 +59,10 @@ const TripForm = ({
           <p>
             Destination: {trip.destination.x}, {trip.destination.y}
           </p>
+          <p>Capacity: {trip.capacity}</p>
+          {trip.uid != user.uid && trip.capacity != 0 && (
+            <button onClick={() => bookTrip(trip)}>Book</button>
+          )}
         </div>
       ))}
     </div>
