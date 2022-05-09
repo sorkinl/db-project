@@ -38,6 +38,16 @@ const TripForm = ({
       .catch((err) => console.log(err));
   };
 
+  const deleteTrip = (trip) => {
+    axios
+      .delete(`/api/deleteTrip/${trip.trip_id}`, {
+      })
+      .then(() => {
+        setModal(false);
+      })
+      .catch((err) => console.log(err));
+  }
+
   return (
     <div>
       <button onClick={() => loadTrips()}>Load Trips</button>
@@ -62,6 +72,9 @@ const TripForm = ({
           <p>Capacity: {trip.capacity}</p>
           {trip.uid != user.uid && trip.capacity != 0 && (
             <button onClick={() => bookTrip(trip)}>Book</button>
+          )}
+          {trip.uid != user.uid && trip.capacity != 0 && (
+            <button onClick={() => deleteTrip(trip)}>Delete</button>
           )}
         </div>
       ))}

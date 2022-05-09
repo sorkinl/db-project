@@ -94,6 +94,7 @@ app.get(`/api/getBookedTrips/:uid`, jsonParser, (req, res) => {
     }
   );
 });
+
 app.post("/api/updateTrip", jsonParser, (req, res) => {
   let body = req.body;
   let query = "UPDATE trips SET ? WHERE ?";
@@ -132,10 +133,9 @@ app.post("/api/updateTrip", jsonParser, (req, res) => {
   );
 });
 
-app.delete("/api/deleteTrip", jsonParser, (req, res) => {
-  let body = req.body;
+app.delete(`/api/deleteTrip/:trip_id`, jsonParser, (req, res) => {
 
-  connection.query(`DELETE from trips WHERE trip_id = (${body.trip_id}) `, (err, results, fields) => {
+  connection.query(`DELETE from trips WHERE trip_id = ${req.params.trip_id}`, (err, results) => {
     if (err) {
       console.log(err);
       res.json({ message: "Error" });
@@ -143,12 +143,10 @@ app.delete("/api/deleteTrip", jsonParser, (req, res) => {
     } else {
       res.json({ message: "Success", results });
     }
-
-    console.log("Success");
   });
-})
+});
 
-app.get("/api/signin", jsonParser, (req, res) => {
+app.post("/api/signin", jsonParser, (req, res) => {
   let body = req.body;
   let query = "SELECT * FROM users WHERE ?";
 
@@ -167,7 +165,6 @@ app.get("/api/signin", jsonParser, (req, res) => {
           throw err;
         }
       });
-    
     }
     console.log("Success");
   });
