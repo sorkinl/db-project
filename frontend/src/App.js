@@ -91,6 +91,44 @@ const App = () => {
         console.error(err);
       });
   };
+  const filter10000 = async () => {
+    console.log(clicks[0]);
+    const response = await axios.get("/api/filter/10000", {
+      params: {
+        originLat: clicks[0].lat(),
+        originLng: clicks[0].lng(),
+        destinationLat: clicks[1].lat(),
+        destinationLng: clicks[1].lng(),
+      },
+    });
+    setTripList(response.data.results[0]);
+  };
+
+  const filter50000 = async () => {
+    console.log(clicks[0]);
+    const response = await axios.get("/api/filter/50000", {
+      params: {
+        originLat: clicks[0].lat(),
+        originLng: clicks[0].lng(),
+        destinationLat: clicks[1].lat(),
+        destinationLng: clicks[1].lng(),
+      },
+    });
+    setTripList(response.data.results[0]);
+  };
+
+  const filter100000 = async () => {
+    console.log(clicks[0]);
+    const response = await axios.get("/api/filter/100000", {
+      params: {
+        originLat: clicks[0].lat(),
+        originLng: clicks[0].lng(),
+        destinationLat: clicks[1].lat(),
+        destinationLng: clicks[1].lng(),
+      },
+    });
+    setTripList(response.data.results[0]);
+  };
   const deleteTrip = () => {
     axios
       .delete("/api/delete", { data: { tripId: tripList[0].tripId } })
@@ -119,6 +157,7 @@ const App = () => {
           origin: clicks[0],
           destination: clicks[1],
           uid: user.uid,
+          capacity: 1,
         })
 
         .then(function (response) {
@@ -322,6 +361,9 @@ const App = () => {
               loadMyTrips={loadMyTrips}
               user={user}
               loadBookedTrips={loadBookedTrips}
+              filter10000={filter10000}
+              filter50000={filter50000}
+              filter100000={filter100000}
             />
           )}
           {modalForm == 2 && (

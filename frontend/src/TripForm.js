@@ -11,6 +11,9 @@ const TripForm = ({
   loadMyTrips,
   user,
   loadBookedTrips,
+  filter10000,
+  filter50000,
+  filter100000,
 }) => {
   console.log(tripList);
 
@@ -20,6 +23,7 @@ const TripForm = ({
       trip.destination.x,
       trip.destination.y
     );
+
     setTripId(trip.trip_id);
     setModal(false);
     setInputValues({ tripName: trip.name });
@@ -53,6 +57,9 @@ const TripForm = ({
       <button onClick={() => loadTrips()}>Load Trips</button>
       <button onClick={() => loadMyTrips()}>Load My Trips</button>
       <button onClick={() => loadBookedTrips()}>Load booked Trips</button>
+      <button onClick={() => filter10000()}>Filter 10000m</button>
+      <button onClick={() => filter50000()}>Filter 50000m</button>
+      <button onClick={() => filter100000()}>Filter 100000m</button>
       {tripList.map((trip) => (
         <div key={trip.trip_id}>
           <h3
