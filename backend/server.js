@@ -94,6 +94,7 @@ app.get(`/api/getBookedTrips/:uid`, jsonParser, (req, res) => {
     }
   );
 });
+
 app.post("/api/updateTrip", jsonParser, (req, res) => {
   let body = req.body;
   let query = "UPDATE trips SET ? WHERE ?";
@@ -131,6 +132,43 @@ app.post("/api/updateTrip", jsonParser, (req, res) => {
     }
   );
 });
+
+app.delete(`/api/deleteTrip/:trip_id`, jsonParser, (req, res) => {
+
+  connection.query(`DELETE from trips WHERE trip_id = ${req.params.trip_id}`, (err, results) => {
+    if (err) {
+      console.log(err);
+      res.json({ message: "Error" });
+      throw err;
+    } else {
+      res.json({ message: "Success", results });
+    }
+  });
+});
+
+app.post("/api/signin", jsonParser, (req, res) => {
+  let body = req.body;
+  let query = "SELECT * FROM users WHERE ?";
+
+  connection.query(
+    query, 
+    { username: body.username}, (err, results) => {
+    if (err) {
+      console.log(err);
+      res.json({ message: "Error" });
+      throw err;
+    } else {
+      bcrypt.compare(body.pw_hash, results[0].pw_hash, function (err, result) {
+        if (result) {
+          res.json({ message: "Success", results });
+        } else {
+          throw err;
+        }
+      });
+    }
+    console.log("Success");
+  });
+})
 
 app.post("/api/signup", jsonParser, (req, res) => {
   let body = req.body;

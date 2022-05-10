@@ -170,7 +170,21 @@ const App = () => {
     setInputValues({ ...inputValues, [name]: value });
   };
 
-  const signIn = () => {};
+  const signIn = () => {
+    axios
+      .post("api/signin", {
+        username: inputValues.username,
+        pw_hash: inputValues.password,
+      })
+      .then((res) => {
+        console.log(res);
+        setUser(res.data.results[0]);
+        setModal(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const signUp = () => {
     axios
