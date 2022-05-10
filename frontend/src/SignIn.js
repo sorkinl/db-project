@@ -4,6 +4,7 @@ const SignIn = ({ handleOnChange, inputValues, signIn, signUp }) => {
   return (
     <div>
       <input
+        autocomplete="off"
         name="username"
         placeholder="Username"
         onChange={handleOnChange}

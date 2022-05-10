@@ -31,10 +31,7 @@ const App = () => {
    * 3
    */
   const [modalForm, setModalForm] = React.useState(0);
-  const [user, setUser] = React.useState({
-    uid: 14,
-    username: "sorkinl1",
-  });
+  const [user, setUser] = React.useState({});
   const [inputValues, setInputValues] = React.useState({
     username: "",
     password: "",

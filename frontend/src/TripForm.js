@@ -44,13 +44,12 @@ const TripForm = ({
 
   const deleteTrip = (trip) => {
     axios
-      .delete(`/api/deleteTrip/${trip.trip_id}`, {
-      })
+      .delete(`/api/deleteTrip/${trip.trip_id}`, {})
       .then(() => {
         setModal(false);
       })
       .catch((err) => console.log(err));
-  }
+  };
 
   return (
     <div>
@@ -77,12 +76,12 @@ const TripForm = ({
             Destination: {trip.destination.x}, {trip.destination.y}
           </p>
           <p>Capacity: {trip.capacity}</p>
-          {trip.uid != user.uid && trip.capacity != 0 && (
-            <button onClick={() => bookTrip(trip)}>Book</button>
-          )}
-          {trip.uid != user.uid && trip.capacity != 0 && (
-            <button onClick={() => deleteTrip(trip)}>Delete</button>
-          )}
+          {true && <button onClick={() => bookTrip(trip)}>Book</button>}
+          {
+            /*trip.uid == user.uid*/ true && (
+              <button onClick={() => deleteTrip(trip)}>Delete</button>
+            )
+          }
         </div>
       ))}
     </div>
