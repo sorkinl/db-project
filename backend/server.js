@@ -32,8 +32,8 @@ app.post("/api/addTrip", jsonParser, (req, res) => {
   let body = req.body;
   console.log(req.body);
   connection.query(
-    `INSERT INTO trips (uid,name,origin,destination) VALUES 
-    (${body.uid},"${body.name}",POINT(${body.origin.lat},${body.origin.lng}),POINT(${body.destination.lat},${body.destination.lng})); `,
+    `INSERT INTO trips (uid,name,origin,destination,capacity) VALUES 
+    (${body.uid},"${body.name}",POINT(${body.origin.lat},${body.origin.lng}),POINT(${body.destination.lat},${body.destination.lng}),${body.capacity}); `,
     (err, rows, fields) => {
       if (err) {
         res.json({ message: "Error" });
@@ -197,6 +197,87 @@ app.post("/api/bookTrip", jsonParser, (req, res) => {
       res.send({ message: "Success" });
     });
   });
+});
+
+app.get("/api/filter/10000", (req, res) => {
+  let query = `CALL filter_10000(POINT(?,?),POINT(?,?))`;
+  console.log([
+    req.query.originLat,
+    req.query.originLng,
+    req.query.destinationLat,
+    req.query.destinationLng,
+  ]);
+  connection.query(
+    query,
+    [
+      req.query.originLat,
+      req.query.originLng,
+      req.query.destinationLat,
+      req.query.destinationLng,
+    ],
+    (err, results, fields) => {
+      if (err) throw err;
+      console.log(results);
+      res.send({
+        message: "Success",
+        results,
+      });
+    }
+  );
+});
+
+app.get("/api/filter/100000", (req, res) => {
+  let query = `CALL filter_100000(POINT(?,?),POINT(?,?))`;
+  console.log([
+    req.query.originLat,
+    req.query.originLng,
+    req.query.destinationLat,
+    req.query.destinationLng,
+  ]);
+  connection.query(
+    query,
+    [
+      req.query.originLat,
+      req.query.originLng,
+      req.query.destinationLat,
+      req.query.destinationLng,
+    ],
+    (err, results, fields) => {
+      if (err) throw err;
+      console.log(results);
+      res.send({
+        message: "Success",
+        results,
+      });
+    }
+  );
+});
+
+app.get("/api/filter/50000", (req, res) => {
+  let query = `CALL filter_50000(POINT(?,?),POINT(?,?))`;
+  console.log([
+    req.query.originLat,
+    req.query.originLng,
+    req.query.destinationLat,
+    req.query.destinationLng,
+  ]);
+  connection.query(
+    query,
+    [
+      req.query.originLat,
+      req.query.originLng,
+      req.query.destinationLat,
+      req.query.destinationLng,
+    ],
+    (err, results, fields) => {
+      if (err) throw err;
+      console.log(results);
+      res.send({
+        message: "Success",
+        results,
+      });
+    }
+  );
 });
 
 // set port, listen for requests
